@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient
-const dbConfig = require('./dbConfig');
+const dbConfig = require('../dbConfig');
 
 const connectDB = (req, res, next) => {
   MongoClient.connect(dbConfig.dbURL, {
