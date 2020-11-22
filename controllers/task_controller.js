@@ -1,3 +1,4 @@
+const { ObjectID } = require("mongodb");
 const constants = require("../models/constants");
 const Task = require("../models/Task");
 
@@ -51,6 +52,33 @@ module.exports = {
           res.json({ tasks, count: tasks.length });
           return;
         });
+    }
+  },
+
+  changeStatus: async (req, res, next) => {
+    if (!req.params._id || !req.params.newStatus) {
+      res.status(400).send("Bad input id");
+      return;
+    }
+
+    const newStatus = constants.TaskStatus[req.params.newStatus];
+    if (!newStatus) {
+      res.status(400).send("Bad input status");
+      return;
+    }
+
+    try {
+      const _id = ObjectID(req.params._id);
+      const tasksCollection = req.db.collection("tasks");
+      const result = await tasksCollection.findOneAndUpdate(
+        { _id },
+        { $set: { status: newStatus } },
+        { returnOriginal: false }
+      );
+      res.status(200).json(result.value);
+    } catch (error) {
+      console.error(error);
+      next(error);
     }
   },
 };

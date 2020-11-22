@@ -20,5 +20,6 @@ const router = express.Router();
 
 router.post("/new", uploadMedia.single("attachment"), taskCtrl.addTask);
 router.get("/tasks/page/:pageNumber", taskCtrl.getTasksPaginated);
+router.put("/change-status/:_id/:newStatus", taskCtrl.changeStatus);
 
 module.exports = router;
