@@ -81,4 +81,20 @@ module.exports = {
       next(error);
     }
   },
+
+  deleteTask: async (req, res, next) => {
+    if (!req.params._id) {
+      res.status(400).send("Bad input");
+      return;
+    }
+    try {
+      const query = { _id: ObjectID(req.params._id) };
+      const tasksCollection = req.db.collection("tasks");
+      const result = await tasksCollection.findOneAndDelete(query);
+      res.json(result.value);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
 };
