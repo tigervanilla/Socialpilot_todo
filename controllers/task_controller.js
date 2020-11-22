@@ -1,3 +1,4 @@
+const constants = require("../models/constants");
 const Task = require("../models/Task");
 
 module.exports = {
@@ -11,10 +12,45 @@ module.exports = {
     console.log("newTask::", newTask);
     try {
       const result = await req.db.collection("tasks").insertOne(newTask);
-      res.status(200).send(result);
+      res.status(200).send(result.ops[0]);
     } catch (err) {
       console.error(err);
       next(err);
+    }
+  },
+
+  getTasksPaginated: async (req, res, next) => {
+    const pageNumber = parseInt(req.params.pageNumber) || 1;
+    const tasksCollection = req.db.collection("tasks");
+    const query = {
+      $or: [
+        { status: constants.TaskStatus.todo },
+        { status: constants.TaskStatus.inprogress },
+      ],
+    };
+    const taskCount = await tasksCollection.countDocuments(query);
+    if (taskCount <= 20) {
+      tasksCollection.find(query).toArray((err, tasks) => {
+        if (err) {
+          console.log(err);
+          next(err);
+          return;
+        }
+        res.json({ tasks, count: tasks.length });
+        return;
+      });
+    } else {
+      tasksCollection
+        .find(query, { skip: 20 * (pageNumber - 1), limit: 20 })
+        .toArray((err, tasks) => {
+          if (err) {
+            console.log(err);
+            next(err);
+            return;
+          }
+          res.json({ tasks, count: tasks.length });
+          return;
+        });
     }
   },
 };

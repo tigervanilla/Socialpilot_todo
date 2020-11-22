@@ -19,5 +19,6 @@ const uploadMedia = multer({
 const router = express.Router();
 
 router.post("/new", uploadMedia.single("attachment"), taskCtrl.addTask);
+router.get("/tasks/page/:pageNumber", taskCtrl.getTasksPaginated);
 
 module.exports = router;
