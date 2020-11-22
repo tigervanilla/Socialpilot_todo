@@ -1,24 +1,23 @@
-const express = require('express');
-const multer = require('multer')
-const path = require('path')
+const express = require("express");
+const multer = require("multer");
+const path = require("path");
+const taskCtrl = require("../controllers/task_controller");
 
 const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/bills')
+    cb(null, "public");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
-  }
+    cb(null, Date.now() + path.extname(file.originalname)); //Appending extension
+  },
 });
 
 const uploadMedia = multer({
-  storage: uploadStorage
-})
+  storage: uploadStorage,
+});
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.send('Hello World');
-})
+router.post("/new", uploadMedia.single("attachment"), taskCtrl.addTask);
 
 module.exports = router;
