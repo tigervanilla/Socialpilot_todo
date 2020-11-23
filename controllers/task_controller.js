@@ -22,6 +22,7 @@ module.exports = {
 
   getTasksPaginated: async (req, res, next) => {
     const pageNumber = parseInt(req.params.pageNumber) || 1;
+    const { sortBy, sortDirection } = req.query;
     const tasksCollection = req.db.collection("tasks");
     const query = {
       $or: [
@@ -31,7 +32,13 @@ module.exports = {
     };
     const taskCount = await tasksCollection.countDocuments(query);
     if (taskCount <= 20) {
-      tasksCollection.find(query).toArray((err, tasks) => {
+      const filterOptn =
+        sortBy === "targetDate"
+          ? sortDirection === "desc"
+            ? { sort: [["targetDate", -1]] }
+            : { sort: [["targetDate", 1]] }
+          : undefined;
+      tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
         if (err) {
           console.log(err);
           next(err);
@@ -41,17 +48,23 @@ module.exports = {
         return;
       });
     } else {
-      tasksCollection
-        .find(query, { skip: 20 * (pageNumber - 1), limit: 20 })
-        .toArray((err, tasks) => {
-          if (err) {
-            console.log(err);
-            next(err);
-            return;
-          }
-          res.json({ tasks, count: tasks.length });
+      const filterOptn = { skip: 20 * (pageNumber - 1), limit: 20 };
+      if (sortBy === "targetDate") {
+        if (sortDirection === "desc") {
+          filterOptn.sort = [["targetDate", -1]];
+        } else {
+          filterOptn.sort = [["targetDate", 1]];
+        }
+      }
+      tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
+        if (err) {
+          console.log(err);
+          next(err);
           return;
-        });
+        }
+        res.json({ tasks, count: tasks.length });
+        return;
+      });
     }
   },
 
@@ -96,5 +109,14 @@ module.exports = {
       console.error(error);
       next(error);
     }
+  },
+
+  deleteMultipleTasks: async (req, res, next) => {},
+
+  updateTaskDetails: (req, res, next) => {},
+
+  searchTasks: (req, res, next) => {
+    // Todo: search from Title & Description where results shows in the ascending order of
+    // the Target Date
   },
 };

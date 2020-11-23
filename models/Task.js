@@ -5,7 +5,10 @@ class Task {
     if (data) {
       this.title = data.title || "";
       this.description = data.description || "";
-      this.targetDate = new Date(data.targetDate) || Date.now();
+      this.targetDate = isNaN(new Date(data.targetDate))
+        ? new Date()
+        : new Date(data.targetDate);
+      this.creationTimestamp = Date.now();
       this.status =
         constants.TaskStatus[data.status] || constants.TaskStatus.todo;
       if (attachment) {
