@@ -22,7 +22,7 @@ module.exports = {
 
   getTasksPaginated: async (req, res, next) => {
     const pageNumber = parseInt(req.params.pageNumber) || 1;
-    const { sortBy, sortDirection } = req.query;
+    const { sortBy, sortDirection } = req.autosan.query;
     const tasksCollection = req.db.collection("tasks");
     const query = {
       $or: [
@@ -112,12 +112,14 @@ module.exports = {
   },
 
   deleteMultipleTasks: async (req, res, next) => {
-    if (!req.query || !req.query.id) {
+    if (!req.autosan.query || !req.autosan.query.id) {
       return res.status(400).send("Bad request");
     }
     try {
       const idListRaw =
-        typeof req.query.id === "string" ? [req.query.id] : req.query.id;
+        typeof req.autosan.query.id === "string"
+          ? [req.autosan.query.id]
+          : req.autosan.query.id;
       const idList = idListRaw.map((id) => ObjectID(id));
       const tasksCollection = req.db.collection("tasks");
       const result = tasksCollection.remove({ _id: { $in: idList } });
@@ -159,7 +161,6 @@ module.exports = {
   },
 
   searchTasks: (req, res, next) => {
-    console.log(req.query, req.autosan.query);
     const searchTerm = req.autosan.query.term;
     const tasksCollection = req.db.collection("tasks");
     tasksCollection
