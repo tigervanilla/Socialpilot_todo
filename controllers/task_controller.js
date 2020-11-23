@@ -159,7 +159,13 @@ module.exports = {
   },
 
   searchTasks: (req, res, next) => {
-    // Todo: search from Title & Description where results shows in the ascending order of
-    // the Target Date
+    console.log(req.query, req.autosan.query);
+    const searchTerm = req.autosan.query.term;
+    const tasksCollection = req.db.collection("tasks");
+    tasksCollection
+      .find({ $text: { $search: searchTerm } }, { sort: [["targetDate", 1]] })
+      .toArray((err, docs) => {
+        res.send(docs);
+      });
   },
 };

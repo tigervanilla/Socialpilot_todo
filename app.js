@@ -4,6 +4,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const expAutoSan = require("express-autosanitizer");
 const connectToDB = require("./utils/connect_db_middleware");
 
 const apiRouter = require("./routes/apiRoutes");
@@ -16,6 +17,7 @@ app.use(cors());
 
 app.use(logger("dev"));
 app.use(express.json());
+app.use(expAutoSan.all);
 app.use(
   express.urlencoded({
     extended: false,

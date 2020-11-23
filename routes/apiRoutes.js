@@ -25,6 +25,6 @@ router.delete("/task/multiple", taskCtrl.deleteMultipleTasks);
 router.delete("/task/:_id", taskCtrl.deleteTask);
 
 router.put("/update/:_id", taskCtrl.updateTaskDetails);
-// router.get("/search", taskCtrl.searchTasks);
+router.get("/search", taskCtrl.searchTasks);
 
 module.exports = router;
