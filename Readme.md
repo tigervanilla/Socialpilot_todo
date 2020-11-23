@@ -11,6 +11,10 @@ use socialpilot_todo
 3. Create index on title and description fields <br>
 db.tasks.createIndex( { title: "text", description: "text" } )
 
+___To test the endpoints___
+Open Postman (or equivalent REST Client) <br>
+Import the file named "SocialPilot-Todo.postman_collection.json" available in the repo.
+
 ___REST Endpoints___
 1. POST  - Create new  task <br>
 localhost:3000/api/new

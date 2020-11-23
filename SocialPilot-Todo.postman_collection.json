@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "9e45017e-40c5-4ff9-a46e-e3af4320bfc5",
+		"name": "SocialPilot-Todo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "Task21",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "task description",
+							"type": "text"
+						},
+						{
+							"key": "targetDate",
+							"value": "4/12/2020",
+							"type": "text"
+						},
+						{
+							"key": "status",
+							"value": "todo",
+							"type": "text"
+						},
+						{
+							"key": "attachment",
+							"type": "file",
+							"src": "/home/pi.maheshwari/Pictures/Screenshot from 2020-11-20 16-37-36.png"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:3000/api/new",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"new"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Tasks Paginated",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/tasks/page/:pageNumber?sortBy=targetDate&sortDirection=asc",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tasks",
+						"page",
+						":pageNumber"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "targetDate"
+						},
+						{
+							"key": "sortDirection",
+							"value": "asc"
+						}
+					],
+					"variable": [
+						{
+							"key": "pageNumber",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/search?term=2",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "term",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change status",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/change-status/:_id/:newStatus",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"change-status",
+						":_id",
+						":newStatus"
+					],
+					"variable": [
+						{
+							"key": "_id",
+							"value": "5fba830a90a656688558c7ad"
+						},
+						{
+							"key": "newStatus",
+							"value": "todo"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Change Details",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/update/:_id",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"update",
+						":_id"
+					],
+					"variable": [
+						{
+							"key": "_id",
+							"value": "5fbb4ef892a7d336dd044c17"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete multiple tasks",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/task/multiple?id",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"task",
+						"multiple"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/task/:_id",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"task",
+						":_id"
+					],
+					"variable": [
+						{
+							"key": "_id",
+							"value": "5fba9b0abcb72876a61587d2"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
