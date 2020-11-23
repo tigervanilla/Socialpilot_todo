@@ -23,4 +23,8 @@ router.get("/tasks/page/:pageNumber", taskCtrl.getTasksPaginated);
 router.put("/change-status/:_id/:newStatus", taskCtrl.changeStatus);
 router.delete("/task/:_id", taskCtrl.deleteTask);
 
+router.put("/update/:_id", taskCtrl.updateTaskDetails);
+// router.get("/search", taskCtrl.searchTasks);
+// router.delete("/task/multiple", taskCtrl.deleteMultipleTasks);
+
 module.exports = router;

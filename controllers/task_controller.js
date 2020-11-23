@@ -113,7 +113,35 @@ module.exports = {
 
   deleteMultipleTasks: async (req, res, next) => {},
 
-  updateTaskDetails: (req, res, next) => {},
+  updateTaskDetails: async (req, res, next) => {
+    if (!req.body.title && !req.body.description && !req.body.targetDate) {
+      res.status(400).send("Bad input");
+      return;
+    }
+    try {
+      const _id = ObjectID(req.params._id);
+      const newValue = {};
+      if (req.body.title) {
+        newValue.title = req.body.title;
+      }
+      if (req.body.description) {
+        newValue.description = req.body.description;
+      }
+      if (req.body.targetDate && !isNaN(new Date(req.body.targetDate))) {
+        newValue.targetDate = new Date(req.body.targetDate);
+      }
+      const tasksCollection = req.db.collection("tasks");
+      const result = await tasksCollection.findOneAndUpdate(
+        { _id },
+        { $set: { ...newValue } },
+        { returnOriginal: false }
+      );
+      res.status(200).json(result.value);
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
 
   searchTasks: (req, res, next) => {
     // Todo: search from Title & Description where results shows in the ascending order of
