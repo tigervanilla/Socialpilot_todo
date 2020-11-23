@@ -111,7 +111,22 @@ module.exports = {
     }
   },
 
-  deleteMultipleTasks: async (req, res, next) => {},
+  deleteMultipleTasks: async (req, res, next) => {
+    if (!req.query || !req.query.id) {
+      return res.status(400).send("Bad request");
+    }
+    try {
+      const idListRaw =
+        typeof req.query.id === "string" ? [req.query.id] : req.query.id;
+      const idList = idListRaw.map((id) => ObjectID(id));
+      const tasksCollection = req.db.collection("tasks");
+      const result = tasksCollection.remove({ _id: { $in: idList } });
+      res.send("Done");
+    } catch (error) {
+      console.error(error);
+      next(error);
+    }
+  },
 
   updateTaskDetails: async (req, res, next) => {
     if (!req.body.title && !req.body.description && !req.body.targetDate) {
