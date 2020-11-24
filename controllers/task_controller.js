@@ -10,7 +10,6 @@ module.exports = {
       res.status(400).send("Bad Input");
     }
     const newTask = attachment ? new Task(body, attachment) : new Task(body);
-    console.log("newTask::", newTask);
     try {
       const result = await req.db.collection("tasks").insertOne(newTask);
       res.status(200).send(result.ops[0]);
@@ -21,50 +20,55 @@ module.exports = {
   },
 
   getTasksPaginated: async (req, res, next) => {
-    const pageNumber = parseInt(req.params.pageNumber) || 1;
-    const { sortBy, sortDirection } = req.autosan.query;
-    const tasksCollection = req.db.collection("tasks");
-    const query = {
-      $or: [
-        { status: constants.TaskStatus.todo },
-        { status: constants.TaskStatus.inprogress },
-      ],
-    };
-    const taskCount = await tasksCollection.countDocuments(query);
-    if (taskCount <= 20) {
-      const filterOptn =
-        sortBy === "targetDate"
-          ? sortDirection === "desc"
-            ? { sort: [["targetDate", -1]] }
-            : { sort: [["targetDate", 1]] }
-          : undefined;
-      tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
-        if (err) {
-          console.log(err);
-          next(err);
+    try {
+      const pageNumber = parseInt(req.params.pageNumber) || 1;
+      const { sortBy, sortDirection } = req.autosan.query;
+      const tasksCollection = req.db.collection("tasks");
+      const query = {
+        $or: [
+          { status: constants.TaskStatus.todo },
+          { status: constants.TaskStatus.inprogress },
+        ],
+      };
+      const taskCount = await tasksCollection.countDocuments(query);
+      if (taskCount <= 20) {
+        const filterOptn =
+          sortBy === "targetDate"
+            ? sortDirection === "desc"
+              ? { sort: [["targetDate", -1]] }
+              : { sort: [["targetDate", 1]] }
+            : undefined;
+        tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
+          if (err) {
+            console.error(err);
+            next(err);
+            return;
+          }
+          res.json({ tasks, count: tasks.length });
           return;
+        });
+      } else {
+        const filterOptn = { skip: 20 * (pageNumber - 1), limit: 20 };
+        if (sortBy === "targetDate") {
+          if (sortDirection === "desc") {
+            filterOptn.sort = [["targetDate", -1]];
+          } else {
+            filterOptn.sort = [["targetDate", 1]];
+          }
         }
-        res.json({ tasks, count: tasks.length });
-        return;
-      });
-    } else {
-      const filterOptn = { skip: 20 * (pageNumber - 1), limit: 20 };
-      if (sortBy === "targetDate") {
-        if (sortDirection === "desc") {
-          filterOptn.sort = [["targetDate", -1]];
-        } else {
-          filterOptn.sort = [["targetDate", 1]];
-        }
+        tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
+          if (err) {
+            console.error(err);
+            next(err);
+            return;
+          }
+          res.json({ tasks, count: tasks.length });
+          return;
+        });
       }
-      tasksCollection.find(query, filterOptn).toArray((err, tasks) => {
-        if (err) {
-          console.log(err);
-          next(err);
-          return;
-        }
-        res.json({ tasks, count: tasks.length });
-        return;
-      });
+    } catch (error) {
+      console.error(error);
+      next(error);
     }
   },
 
